@@ -17,16 +17,32 @@ function handler (request, response) {
             response.end(file);
         });
     }
-    else {
-       response.writeHead(200, {"Content-Type": "text/html"});
-    if (endpoint == '/node') {
-       response.write(nodeMessage);
+    else if (endpoint === '/node') {
+        response.writeHead(200, {"Content-Type": "text/html"});
+        response.write(nodeMessage);
+        response.write(message);
+        response.end();
     }
-   if (endpoint == '/girls') {
-       response.write(girlsMessage);
-   }
-   response.write(message);
-   response.end();
+    else if (endpoint === '/girls') {
+        response.writeHead(200, {"Content-Type": "text/html"});
+        response.write(girlsMessage);
+        response.write(message);
+        response.end();
+    }
+    else {
+        if (endpoint.indexOf('css') > 0) {
+            response.writeHead(200, {"Content-Type": "text/css"});
+        }
+        else if (endpoint.indexOf('jpg') > 0) {
+            response.writeHead(200, {"Content-Type": "image/png"});
+        }
+        fs.readFile(__dirname + '/public' + endpoint, function(error, file) {
+            if (error) {
+                console.log(error);
+                return;
+            }
+            response.end(file);
+        });    
    }
 }
 var server = http.createServer(handler);
